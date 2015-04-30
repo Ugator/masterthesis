@@ -1,0 +1,316 @@
+#!/bin/ksh
+#
+# The LM Job
+#
+rm -f cosmo_rea2_free
+#################################################
+# number of processors
+#################################################
+
+NODES=10           # number of nodes
+PPN=64             # processors per node
+NPX=$((NODES*2))   # number of processors in x - direction
+NPY=$((PPN/2))     # number of processors in y - direction
+NPIO=0             # number of processors for I/O
+
+
+DATE=2011060512
+NHOURS=2
+ROOTDIR=/pf/b/b380272/COSMO4_28
+INIDIR=/work/bb0872/flo/ini/
+BD_DIR=/work/bb0872/flo/ini/
+OBSDIR=/work/bb0872/flo/ # could be anything, shouldnt need that
+OUTPUT=/work/bb0872/flo/out/
+WORKDIR=$OUTPUT
+FCSTOUT=$OUTPUT/2D/
+RESTAR=$ROOTDIR/out/
+OUTFILES=$OUTPUT/outfiles
+
+LINITIAL=1
+
+
+mkdir $OUTPUT
+mkdir $FCSTOUT
+mkdir $OUTFILES
+
+cat > cosmo_rea2_free << ****
+#!/bin/ksh
+#################################################
+# batch commandos
+#################################################
+# @ shell = /client/bin/ksh
+# @ job_type = parallel
+# @ node_usage= not_shared
+# @ network.MPI = sn_all,not_shared,us
+# @ rset = rset_mcm_affinity 
+# @ mcm_affinity_options = mcm_accumulate
+# @ node = ${NODES}
+# @ tasks_per_node = ${PPN}
+# @ resources = ConsumableMemory(750mb)
+# @ task_affinity = cpu(1)
+# @ wall_clock_limit = 01:20:00
+# @ job_name = cosmo_rea2_free
+# @ output = $OUTFILES/cosmo_free$MEMBER.out
+# @ error = $OUTFILES/cosmo_free$MEMBER.err
+# @ notification = error
+# @ queue
+export MEMORY_AFFINITY=MCM
+#export MP_PRINTENV=YES
+#export MP_LABELIO=YES
+#export MP_INFOLEVEL=2
+export MP_EAGER_LIMIT=64k
+export MP_BUFFER_MEM=64M,256M
+export MP_USE_BULK_XFER=NO
+export MP_BULK_MIN_MSG_SIZE=128k
+export MP_RFIFO_SIZE=4M
+export MP_SHM_ATTACH_THRESH=500000
+export LAPI_DEBUG_STRIPE_SEND_FLIP=8
+
+cd $WORKDIR
+rm -f YU* M_*
+rm -f $OUTPUT/LMA*
+rm -f $OUTPUT/LMF*
+
+#################################################
+# cat together the INPUT*-files
+#################################################
+
+cat > INPUT_ORG << end_input_org
+ &LMGRID
+  startlat_tot  = -6.0, startlon_tot  = -7.5,
+  pollat=40.0,        pollon=-170.0,
+  dlat=0.018,        dlon=0.018,
+  ie_tot=724,         je_tot=780,        ke_tot=50,
+ /
+ &RUNCTL
+  hstart = 0.0,   hstop  = 2,   dt      = 18.0,    ydate_ini='$DATE',
+  nprocx = $NPX,  nprocy = $NPY,   nprocio = $NPIO,
+    itype_timing=4,
+    ldebug_dyn=.TRUE.
+    idbg_level=999,
+    ldatatypes=.FALSE.,
+    ldfi=.FALSE.,
+    ldiagnos=.TRUE.,
+    ldump_ascii=.FALSE.,
+    leps=.FALSE.,
+    lphys=.TRUE.,
+    luseobs=.FALSE.,
+    luse_rttov=.FALSE.,
+    nboundlines=3,
+    ncomm_type=3,
+    ydate_bd='$DATE',
+ /
+ &TUNING
+  clc_diag  =   0.5,
+  pat_len   = 500.0,
+  tur_len   = 150.0,
+  rlam_heat =   1.0,
+  rlam_mom  =   0.0,
+  rat_lam   =   1.0,
+  rat_can   =   1.0,
+  rat_sea   =  20.0,
+  c_lnd     =   2.0,
+  c_soil    =   1.0,
+  c_sea     =   1.5,
+  z0m_dia   =   0.2,
+  crsmin    = 150.0,
+  wichfakt  =   0.0,
+  qc0       =   0.0002,
+  q_crit    =   1.6,
+  mu_rain   =   0.5,
+  rain_n0_factor = 0.1,
+  v0snow    =    20,
+  tkhmin    =   0.4,
+  tkmmin    =   0.4,
+/
+end_input_org
+
+cat > INPUT_INI  << end_input_ini
+ &INICTL
+    ndfi=0,
+ /
+end_input_ini
+
+cat > INPUT_SAT  << end_input_sat
+ &SATCTL
+  num_sensors=0,
+ /
+end_input_sat
+
+cat > INPUT_IO  << end_input_io
+ &IOCTL
+  lasync_io=.FALSE., l_ke_in_gds=.TRUE., ngribout=1,
+  yform_read='grb1',
+  nsma_stat=0,
+  nvers=41205,
+  nincwait=30,
+  nmaxwait=120,
+  ytrans_out='$OUTPUT'
+ /
+ &GRIBIN
+    hincbound=1.0,
+    lan_hmo3=.FALSE.,
+    lan_lai=.FALSE.,
+    lan_plcov=.FASLE.,
+    lan_rho_snow=.TRUE.,
+    lan_rootdp=.FALSE.,
+    lan_t_cl=.TRUE.,
+    lan_t_s=.FALSE.,
+    lan_t_snow=.TRUE.,
+    lan_t_so0=.TRUE.,
+    lan_vio3=.FALSE.,
+    lan_w_cl=.TRUE.,
+    lan_w_i=.TRUE.,
+    lan_w_snow=.TRUE.,
+    lana_qg=.TRUE.,
+    lana_qi=.TRUE.,
+    lana_qr_qs=.TRUE.,
+    lana_rho_snow=.TRUE.,
+    lbdana=.FALSE.,
+    lchkbd=.TRUE.,
+    lchkini=.TRUE.,
+    llb_qg=.FALSE.,
+    llb_qi=.TRUE.,
+    llb_qr_qs=.FALSE.,
+    ydirini='$INIDIR',
+    ydirbd='$INIDIR',
+ /
+ &GRIBOUT
+    ncomb=0,49,1,50,400,14
+    lanalysis=.FALSE.,
+    lcheck=.FALSE.,
+    yform_write='ncdf',
+    lwrite_const=.FALSE.,
+    l_p_filter=.FALSE.,
+    l_z_filter=.FALSE.,
+    l_fi_filter=.TRUE.,
+    yvarml='U         ','V         ','W         ','T         ',
+           'QV        ','QC        ','PP        ','QI        ',
+           'QS        ','QR        ','HHL       ',
+           'TOT_PREC  ','POT_VORTIC','CAPE_CON  ','T_ENTR    ',
+           'TINC_LH   ','THHR_RAD  ','SOHR_RAD  ','DT_CON    ',
+           'DT_SSO    ',
+  ydir='$OUTPUT',
+/
+end_input_io
+
+cat > INPUT_DYN << end_input_dyn
+ &DYNCTL
+    betasw =0.4,  ! Schall
+    beta2sw=0.4,  ! Schall
+    betagw =0.4,
+    beta2gw=0.4,
+    lhordiff=.TRUE.,
+    itype_hdiff=2,
+    itype_outflow_qrsg=2,
+    hd_corr_u_bd    = 0.75,
+    hd_corr_t_bd    = 0.75,
+    hd_corr_trcr_bd = 0.0,
+    hd_corr_p_bd    = 0.750,
+    hd_corr_u_in    = 0.1,
+    hd_corr_t_in    = 0.0,
+    hd_corr_trcr_in = 0.0,
+    hd_corr_p_in=0.0,
+    hd_dhmax=250.,
+    ldiabf_lh=.TRUE.,
+    iadv_order=5,
+    irk_order=3,
+    irunge_kutta=1,
+    lcond=.TRUE.,
+    lspubc=.TRUE.,
+    xkd=0.1,
+    l2tls=.TRUE.,
+    lexpl_lbc=.TRUE.,
+    lw_freeslip = .TRUE.,
+    y_scalar_advect="Bott2_Strang",
+    nrdtau=5,
+    rlwidth=50000.0,
+    l_diff_Smag=.TRUE.,
+    ldyn_bbc=.FALSE.,
+    itype_bbc_w=114,
+    itype_fast_waves=2,
+ /
+end_input_dyn
+
+cat > INPUT_PHY << end_input_phy
+ &PHYCTL
+      lgsp=.TRUE.,
+      itype_gscp=4,
+      lrad=.TRUE.,
+      hincrad=0.25,
+      lradf_avg=.TRUE.,
+      nradcoarse=2,
+      itype_albedo = 1,
+      ltur=.TRUE.,
+      ninctura=1,
+      lexpcor=.FALSE.,
+      ltmpcor=.FALSE.,
+      lprfcor=.FALSE.,
+      lnonloc=.FALSE.,
+      lcpfluc=.FALSE.,
+      itype_turb=3,
+      l3dturb=.FALSE.,
+      l3dturb_metr=.FALSE.,
+      imode_turb=1,
+      itype_tran=2,
+      imode_tran=1,
+      limpltkediff=.TRUE.,
+      itype_wcld=2,
+      icldm_rad=4,
+      icldm_turb=2,
+      icldm_tran=0,
+      itype_synd=2,
+      lsoil=.TRUE.,
+      itype_evsl=2,
+      itype_trvg=2,
+      lmulti_layer=.TRUE.,
+      lconv=.TRUE.,
+      nincconv=10,
+      lcape=.FALSE.,
+      lconf_avg=.TRUE.,
+      lconv_inst=.TRUE.,
+      itype_conv=3,
+      ldiniprec=.FALSE.,
+      lseaice=.FALSE.,
+      llake=.FALSE.,
+      lsso=.FALSE.,
+      ltkesso  = .TRUE.,
+ /
+end_input_phy
+
+cat > INPUT_DIA << end_input_dia
+ &DIACTL
+    hincgp=12.0,
+    lgplong=.FALSE.,
+    lgpshort=.TRUE.,
+    n0gp=0,
+    n0meanval=0,
+    nincmeanval=1,
+    l_integrals=.FALSE.,
+    imin_integ=301,
+    imax_integ=333,
+    jmin_integ=305,
+    jmax_integ=337,
+    kmin_integ=11,
+    kmax_integ=40,
+ /
+end_input_dia
+
+cat > INPUT_EPS << end_input_eps
+ &EPSCTL
+  iepsmem=0, iepstyp=55, iepstot=15,
+ /
+end_input_eps
+
+cat > INPUT_ASS << end_input_ass
+ &NUDGING
+  lnudge  =.FALSE.,
+ /
+end_input_ass
+
+#################################################
+# run the program
+#################################################
+/pf/b/b380272/COSMO4_28/lmparbin_all
+#cp /perm/ms/de/dfy/RTTOV10/coefficients/* .
+
