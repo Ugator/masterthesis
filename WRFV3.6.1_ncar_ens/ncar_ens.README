@@ -1,0 +1,3 @@
+Flag for multiple bdy files
+
+CPP             =      /lib/cpp -P -D_MULTI_BDY_FILES_

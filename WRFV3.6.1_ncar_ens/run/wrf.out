@@ -1,0 +1,180 @@
+Execute poe command line: poe  ./wrf.exe
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@ys0424-ib>
+Subject: Job 889389: <ens_post_test> in cluster <yellowstone> Done
+
+Job <ens_post_test> was submitted from host <yslogin2-ib> by user <fossell> in cluster <yellowstone>.
+Job was executed on host(s) <16*ys0424-ib>, in queue <regular>, as user <fossell> in cluster <yellowstone>.
+                            <16*ys0425-ib>
+                            <16*ys0451-ib>
+                            <16*ys0460-ib>
+                            <16*ys0468-ib>
+                            <16*ys0508-ib>
+                            <16*ys0510-ib>
+                            <16*ys0516-ib>
+                            <16*ys0518-ib>
+                            <16*ys0519-ib>
+                            <16*ys0520-ib>
+                            <16*ys0521-ib>
+                            <16*ys0523-ib>
+                            <16*ys0527-ib>
+                            <16*ys0528-ib>
+                            <16*ys0529-ib>
+                            <16*ys0530-ib>
+                            <16*ys0531-ib>
+                            <16*ys0533-ib>
+                            <16*ys0534-ib>
+                            <16*ys0541-ib>
+                            <16*ys0544-ib>
+                            <16*ys0547-ib>
+                            <16*ys0549-ib>
+                            <16*ys0555-ib>
+                            <16*ys0558-ib>
+                            <16*ys0559-ib>
+                            <16*ys0569-ib>
+                            <16*ys0572-ib>
+                            <16*ys0602-ib>
+                            <16*ys0624-ib>
+                            <16*ys0625-ib>
+</glade/u/home/fossell> was used as the home directory.
+</glade/u/home/fossell/work/NCAR_ENSEMBLE_2015/dev/WRFV3.6.1_ncar_ens/run> was used as the working directory.
+Started at Tue Mar 17 08:53:09 2015
+Results reported at Tue Mar 17 09:28:28 2015
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#
+# LSF batch script for WRF-Channel Model
+#
+#BSUB -P NMMM0001          # Your project number MUST go here
+#BSUB -n 512             # number of total (MPI) tasks (in this case one node)
+                           # 1n=8p ; 2n=16p
+#BSUB -R "span[ptile=16]"   # run a max of 8 tasks per node
+#BSUB -J ens_post_test     # job name
+#BSUB -o wrf.out           # output filename
+#BSUB -e wrf.err           # error filename
+#BSUB -W 0:45              # wallclock time (HH:MM)
+#BSUB -q regular         # queue
+
+setenv TARGET_CPU_LIST -1
+#mpirun.lsf ./real.exe
+mpirun.lsf ./wrf.exe
+
+exit
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               1093720.00 sec.
+    Max Memory :             548264 MB
+    Average Memory :         493213.47 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          548
+    Max Threads :            5865
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <wrf.err> for stderr output of this job.
+
+Execute poe command line: poe  ./wrf.exe
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@ys6116-ib>
+Subject: Job 891733: <ens_post_test> in cluster <yellowstone> Done
+
+Job <ens_post_test> was submitted from host <yslogin6-ib> by user <fossell> in cluster <yellowstone>.
+Job was executed on host(s) <16*ys6116-ib>, in queue <regular>, as user <fossell> in cluster <yellowstone>.
+                            <16*ys6118-ib>
+                            <16*ys6119-ib>
+                            <16*ys6121-ib>
+                            <16*ys6122-ib>
+                            <16*ys6142-ib>
+                            <16*ys6146-ib>
+                            <16*ys6151-ib>
+                            <16*ys6232-ib>
+                            <16*ys6240-ib>
+                            <16*ys6250-ib>
+                            <16*ys6253-ib>
+                            <16*ys6254-ib>
+                            <16*ys6255-ib>
+                            <16*ys6256-ib>
+                            <16*ys6257-ib>
+                            <16*ys6258-ib>
+                            <16*ys6259-ib>
+                            <16*ys6305-ib>
+                            <16*ys6306-ib>
+                            <16*ys6307-ib>
+                            <16*ys6308-ib>
+                            <16*ys6315-ib>
+                            <16*ys6316-ib>
+                            <16*ys6319-ib>
+                            <16*ys6320-ib>
+                            <16*ys6321-ib>
+                            <16*ys6326-ib>
+                            <16*ys6330-ib>
+                            <16*ys6331-ib>
+                            <16*ys6334-ib>
+                            <16*ys6336-ib>
+</glade/u/home/fossell> was used as the home directory.
+</glade/u/home/fossell/work/NCAR_ENSEMBLE_2015/dev/WRFV3.6.1_ncar_ens/run> was used as the working directory.
+Started at Tue Mar 17 11:01:33 2015
+Results reported at Tue Mar 17 11:20:48 2015
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#
+# LSF batch script for WRF-Channel Model
+#
+#BSUB -P NMMM0001          # Your project number MUST go here
+#BSUB -n 512             # number of total (MPI) tasks (in this case one node)
+                           # 1n=8p ; 2n=16p
+#BSUB -R "span[ptile=16]"   # run a max of 8 tasks per node
+#BSUB -J ens_post_test     # job name
+#BSUB -o wrf.out           # output filename
+#BSUB -e wrf.err           # error filename
+#BSUB -W 0:45              # wallclock time (HH:MM)
+#BSUB -q regular         # queue
+
+setenv TARGET_CPU_LIST -1
+#mpirun.lsf ./real.exe
+mpirun.lsf ./wrf.exe
+
+exit
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               585866.00 sec.
+    Max Memory :             545147 MB
+    Average Memory :         450652.97 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          548
+    Max Threads :            5865
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <wrf.err> for stderr output of this job.
+
