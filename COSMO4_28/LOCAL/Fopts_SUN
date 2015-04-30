@@ -1,0 +1,22 @@
+#########
+# HPC
+#########
+#
+F90          = mpif90 -c -fpp -I$(SRCDIR)   \
+               -DGRIBDWD
+#
+#
+COMFLG1      = -O3  -openmp=parallel
+COMFLG2      = $(COMFLG1)
+COMFLG3      = -O0
+COMFLG4      = -O1
+#
+# linker
+LDPAR        = mpif90
+LDSEQ        =
+#
+# standard binary
+PROGRAM      = lmparbin
+#
+LIB          = /usr/local/pkg/libdwd/lib/libgrib1.a
+#

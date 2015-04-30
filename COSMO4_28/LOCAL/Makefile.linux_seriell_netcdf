@@ -1,0 +1,107 @@
+####################################################
+#
+#    Makefile for the Fortran 90 program
+#
+####################################################
+#
+#
+# !!! This is a Makefile for users which do not
+#     have a system wide NetCDF installation.
+#     Either they have no NetCDF, or it is installed 
+#     locally.
+#
+# Usage: make -f Makefile.linux_ifort_netcdf seqexe (without ncdf-support)
+#        make -f Makefile.linux_ifort_netcdf seqexe (with    ncdf-support)
+#
+####################################################
+#
+#    Declaration of Variables
+#
+####################################################
+#
+.SILENT:
+#
+STDROOT      = ${PWD}
+SRCDIR       = $(STDROOT)/src
+OBJDIR       = $(STDROOT)/obj
+WORKDIR      = $(STDROOT)/work
+#
+## specify root directory of local netcdf-installation:
+NCDFDIR      = $(HOME)/LM/LIBNETCDF/netcdf-3.6.1
+#
+# standard binary
+PROGRAM      = lmseqbin
+#
+#
+####################################################
+#  include (or build) an appropriate compiler file
+#     some compiler files are available in LOCAL
+#     and can be copied to Fopts
+####################################################
+
+include Fopts.linux_seriell_netcdf
+
+####################################################
+#  Declaration of the Object Files
+####################################################
+
+include ObjFiles
+
+####################################################
+#  Actions that can be performed
+####################################################
+#
+exe:    seqexe-ncdf
+#
+parexe:  $(OBJDIR)/dummy_netcdf.o $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ)
+	echo linking parallel program
+	( $(LDPAR) $(LDFLG) -o $(PROGRAM) $(OBJDIR)/dummy_netcdf.o $(DATAOBJ) $(UTILOBJ) $(EXTOBJ) \
+                                    $(PUBLICUTILS) $(SRCOBJ) $(LIB) )
+#
+parexe-ncdf:  linknetcdfinterface / $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ)
+	echo linking parallel program
+	( $(LDPAR) $(LDFLG) -o $(PROGRAM) $(DATAOBJ) $(UTILOBJ) $(EXTOBJ) \
+                                    $(PUBLICUTILS) $(SRCOBJ) $(LIB) $(NCDFLIB) )
+#
+seqexe:  $(OBJDIR)/dummy_netcdf.o $(OBJDIR)/dummy_mpi.o $(OBJDIR)/dummy_mpi.o $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ)         
+	echo linking sequential program
+	( $(LDSEQ) $(LDFLG) -o $(PROGRAM) $(OBJDIR)/dummy_netcdf.o $(DATAOBJ) $(PUBLICUTILS)         \
+         $(UTILOBJ) $(OBJDIR)/dummy_mpi.o $(EXTOBJ) $(SRCOBJ) $(LIB) )
+#
+seqexe-ncdf:  linknetcdfinterface / $(OBJDIR)/dummy_mpi.o $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ)
+	echo linking sequential program
+	( $(LDSEQ) $(LDFLG) -o $(PROGRAM) $(OBJDIR)/dummy_mpi.o $(DATAOBJ) $(PUBLICUTILS)        \
+         $(UTILOBJ) $(EXTOBJ) $(SRCOBJ) $(LIB) $(NCDFLIB) )
+#
+addmods:
+	for DATEI in `ls -x $(WORKDIR)` ; do \
+	   cp -p $(WORKDIR)/$${DATEI}  $(SRCDIR) ; \
+	done
+#
+linknetcdfinterface:
+	if [ -f $(NCDFDIR)/include/netcdf.mod ] ; then \
+	  ln -sf $(NCDFDIR)/include/netcdf.mod $(OBJDIR)/. ; \
+	else \
+	  echo ; \
+	  echo ========= NetCDF-Interface nicht vorhanden !!! =============== ; \
+	  echo ========= $(NCDFDIR)/include/netcdf.mod ;\
+	  echo ; \
+	fi
+#
+clean:
+	echo cleaning up
+	rm -f $(PROGRAM)
+	rm -f $(OBJDIR)/*.o
+	rm -f $(OBJDIR)/i.*
+	rm -f $(OBJDIR)/*.T
+	rm -f $(OBJDIR)/*.L
+	rm -f $(OBJDIR)/*.mod
+	rm -f $(OBJDIR)/*.lst
+#
+####################################################
+#
+#     Dependencies of the Data Modules
+#
+####################################################
+
+include ObjDependencies

@@ -1,0 +1,56 @@
+#########
+#  IBM at Reading
+#########
+#
+# compiler
+F90          = mpxlf95_r -g -c -qsuffix=f=f90:cpp=f90 -qmaxmem=-1           \
+              -I$(SRCDIR)  -I/usr/local/apps/netcdf/3.6.3/LP64/include      \
+              -I/home/ms/de/dwg/LIBS/RTTOV9/include                         \
+              $(GRIB_API_INCLUDE)                                           \
+              -qsuppress=1518-061 -qsuppress=1514-008                       \
+              -qsaveopt -qcache=auto                                        \
+              -WF,-DGRIBDWD -WF,-DNUDGING -WF,-DNETCDF -WF,-DRTTOV9         \
+              -WF,-DGRIBAPI -WF,-DFPEABORT
+#              -DNECSX -DNUDGING -DNETCDF -DGRIBDWD -DRTTOV9
+#              -qlanglvl=90std -qsaveopt
+#             -qflttrap=overflow:zerodivide:invalid:enable -qsigtrap
+#
+# linker
+LDPAR        = mpxlf95_r
+LDSEQ        = xlf_r
+#
+# standard binary
+PROGRAM      = lmparbin
+#
+# compile-flags
+COMFLG1      = -O3 -qstrict -qarch=pwr7 -qtune=pwr7
+COMFLG2      = -O3 -qstrict -qarch=pwr7 -qtune=pwr7
+COMFLG3      = -O3 -qstrict -qarch=pwr7 -qtune=pwr7
+COMFLG4      = -O2 -qstrict
+#
+# link-flags
+LDFLG        = -g -lmass -qfullpath
+#LDFLG        = -Wl,-m -bloadmap:lm.map -qreport -bnoquiet
+#              -bloadmap:lm.map -bnoquiet
+#
+# debug binary
+#PROGRAM      = lmpar_debug
+#
+# debug-compile-flags
+#COMFLG2      = -qfullpath -qinitauto=ff -qcheck -qflttrap=OV:ZERO:INV:EN
+#COMFLG1      = -qfullpath -qinitauto=ff -qcheck -qflttrap=OV:ZERO:INV:EN
+#COMFLG3      = -qfullpath -qinitauto=ff -qcheck -qflttrap=OV:ZERO:INV:EN
+#COMFLG4      = -qfullpath -qinitauto=ff -qcheck -qflttrap=OV:ZERO:INV:EN
+#
+# debug-link-flags
+#LDFLG        = -g -qfullpath -lmass -bmaxdata:2048000000 -bnoobjreorder
+#
+LIB          =  /home/ms/de/dwd/libdwd/lib/libgrib1.a                      \
+                /usr/local/apps/netcdf/3.6.3/LP64/lib/libnetcdf.a          \
+                /home/ms/de/dfj/lib/libFPE_trap.a                          \
+                $(GRIB_API_LIB)                                            \
+                /home/ms/de/dwg/LIBS/RTTOV9/lib/librttov9.3.a              \
+                /home/ms/de/dwg/LIBS/RTTOV9/lib/librttov9.3_parallel.a     \
+                /home/ms/de/dwg/LIBS/RTTOV9/lib/librttov_93_ifc.a
+#               /perm/ms/de/dfj/lib/libRTTOV7_synsat_vector.a              \
+#

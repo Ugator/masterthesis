@@ -1,0 +1,53 @@
+#########
+# gfortran 
+#########
+#
+#-fcheck=all <all|array-temps|bounds|do|mem|pointer|recursion>
+#-finit-integer=n
+#-finit-real=nan
+#-finit-logical=<true|false>
+#-fno-range-check 
+#F90          = gfortran -x f95-cpp-input -c  -fcheck=all
+
+F90          = gfortran -cpp -c                                                          \
+               -ffpe-trap=invalid,zero,overflow,denormal -fbacktrace  -fdump-core        \
+               -I/uwork1/hanlauf/opt/gfortran45/grib_api/include                         \
+               -I$(SRCDIR) -I/usr/include -I/home/uschaett/RTTOV/RTTOV10/include         \
+               -DGRIBDWD -DGRIBAPI -DNETCDF -DRTTOV10 -DNUDGING
+#              -DCOSMOART -DPOLLEN
+#              -DGRIBDWD -DGRIBAPI -DNETCDF -DRTTOV10 -DNUDGING
+#
+#  -x f95-cpp-input:   apply C-preprocessor to every file (not only .F90)
+#
+#COMFLG1      = -g
+#COMFLG2      = -g
+#COMFLG3      = -g
+#COMFLG4      = -g
+COMFLG1      = -O2
+COMFLG2      = $(COMFLG1)
+COMFLG3      = $(COMFLG1)
+COMFLG4      = -O0
+#
+# linker
+LDPAR        = gfortran
+LDSEQ        = gfortran
+#
+# standard binary
+PROGRAM      = lmseqbin
+#
+LIB          = ../../LIBS/lib_gfortran/libgrib1.a                                \
+                /uwork1/hanlauf/opt/gfortran45/grib_api/lib/libgrib_api_f90.a    \
+                /uwork1/hanlauf/opt/gfortran45/grib_api/lib/libgrib_api.a        \
+                -lm -lpng -ljasper                                               \
+                -lnetcdff  -lnetcdf -L/usr/lib64                                 \
+               /home/uschaett/RTTOV/RTTOV10/lib/libradiance10.2.a                \
+               /home/uschaett/RTTOV/RTTOV10/lib/librttov10.2.a
+#              /home/uschaett/RTTOV/RTTOV9/ifc_for_RTTOV9/librttov9_ifc.a \
+#              /home/uschaett/RTTOV/RTTOV9/rttov9_cosmo/rttov9.3-linux_gfortran/lib/librttov9.3.a  \
+#              /home/uschaett/RTTOV/RTTOV9/rttov9_cosmo/rttov9.3-linux_gfortran/lib/librttov9.3_parallel.a  \
+#
+#  for GRIB_API, but only with sunstudio f95
+#    Options:  -I/opt/grib_api/include
+#              /opt/grib_api/lib/libgrib_api.a            \
+#              /opt/grib_api/lib/libgrib_api_f77.a        \
+#              /opt/grib_api/lib/libgrib_api_f90.a        \

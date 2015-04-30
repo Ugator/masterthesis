@@ -1,0 +1,44 @@
+#  change compiler, options and libraries according to your needs
+#
+#########
+#  blizzard (IBM)
+#########
+
+# modules and libraries
+#BINDIR  = /opt/scali/bin/
+#MPIPATH = /opt/scali/lib64/
+MPIINC  = -I/usr/lpp/ppe.poe/include -I/usr/lpp/ppe.poe/includ/thread64
+LPATH   = -L/usr/lib -L/sw/aix53/netcdf-4.0.1-ibm/lib
+OTHLIBS1= -L/usr/lib -lessl -lmass -L/sw/aix53/lapack-3.2.0/lib -llapack -lblas
+OTHLIBS2= -L/sw/aix53/hdf5-1.8.2/lib -lhdf5_hl -lhdf5  -L /sw/aix53/zlib-1.2.3/lib -lz -L/sw/aix53/szip-2.1/lib -lsz
+HPMLIB=-L/usr/lpp/ppe.hpct/lib64 -lhpc
+LIBS    =  -lnetcdf
+
+
+NC_INCLUDE  =  -I/sw/aix53/netcdf-4.0.1-ibm/include
+GRIB_LIB = /pf/b/b364040/imdi/AIX-xlf/lib/libgrib1DWD.a
+#MPI_INCLUDE  = /opt/mpich-1.2.7/include
+#MPI_LIB      = /opt/mpich-1.2.7/lib/libmpich.a
+
+# standard binary
+PROGRAM      = cclm4.11
+
+#
+#
+# compiler, options and libraries
+
+F90          = mpxlf95_r
+
+COMFLG1       = -c -q64 -qsuffix=cpp=f90 -qmaxmem=-1 -O3 -qstrict -qarch=pwr6 -qtune=pwr6 -qextname  -I/usr/lpp/ppe.hpct/include -I/usr/lpp/ppe.poe/include/thread64 -I/usr/lpp/ppe.poe/include -I/sw/aix53/netcdf-4.0.1-ibm/include -I. -I$(SRCDIR) -I$(SRCDIR)/IFS -WF,-D__AIX,-D_AIX,-DIBM,-D__ibm__,-Dextname,-D_EXTNAME $(MPIINC) ${NC_INCLUDE}
+
+COMFLG2      = $(COMFLG)
+COMFLG3      = $(COMFLG)
+COMFLG4      = -c -q64 -qsuffix=cpp=f90 -qmaxmem=-1 -O2 -qstrict -qarch=pwr6 -qtune=pwr6 -qextname  -I/usr/lpp/ppe.hpct/include -I/usr/lpp/ppe.poe/include/thread64 -I/usr/lpp/ppe.poe/include -I/sw/aix53/netcdf-4.0.1-ibm/include -I. -I$(SRCDIR) -I$(SRCDIR)/IFS -WF,-D__AIX,-D_AIX,-DIBM,-D__ibm__,-Dextname,-D_EXTNAME $(MPIINC) ${NC_INCLUDE}
+COMFLG5      = $(COMFLG)
+COMFLG6      = $(COMFLG)
+LDSEQ        = mpxlf95_r
+LDPAR        = mpxlf95_r 
+#LDFLG        = -q64 -qextname -bmaxdata:2048000000 -I$(SRCDIR) -I$(SRCDIR)/IFS
+#LDFLG        = -q64 -qextname -bmaxdata:2048000000  -I$(SRCDIR) -I$(SRCDIR)/IFS -L/usr/lpp/ppe.hpct/lib64 -lmpitrace
+LDFLG        = -q64 -qextname  -I$(SRCDIR) -I$(SRCDIR)/IFS -L/usr/lpp/ppe.hpct/lib64 -lmpitrace
+LIB          = ${LPATH} ${GRIB_LIB} ${LIBS} ${OTHLIBS1} ${OTHLIBS2} ${HPMLIB}

@@ -1,0 +1,112 @@
+####################################################
+#
+#    Makefile for the Fortran 90 program
+#
+####################################################
+#
+#
+####################################################
+#
+#    Declaration of Variables
+#
+####################################################
+#
+.SILENT:
+#
+STDROOT      = ${PWD}
+SRCDIR       = $(STDROOT)/src
+OBJDIR       = $(STDROOT)/obj
+WORKDIR      = $(STDROOT)/work
+#
+#
+####################################################
+#  include (or build) an appropriate compiler file
+#     some compiler files are available in LOCAL
+#     and can be copied to Fopts
+####################################################
+
+include Fopts.twomom
+
+####################################################
+#  Declaration of the Object Files
+####################################################
+
+include ObjFiles.twomom
+
+####################################################
+#  Actions that can be performed
+####################################################
+#
+exe:    allexe
+#
+purexe:  $(OBJDIR) $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ)
+	echo linking parallel program
+	if [ -f $(SRCDIR)/mpif.h ]; then \
+          echo "ERROR: there is an mpif.h in src/ !"; \
+          exit 1; \
+        fi
+	( $(LDPAR) $(LDFLG) -o $(PROGRAM)_pur $(DATAOBJ) $(UTILOBJ) $(EXTOBJ) \
+                                    $(PUBLICUTILS) $(SRCOBJ) $(LIB) )
+#
+allexe:  $(OBJDIR) $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ) $(ASSOBJ) $(SATOBJ)
+	echo linking parallel program
+	if [ -f $(SRCDIR)/mpif.h ]; then \
+          echo "ERROR: there is an mpif.h in src/ !"; \
+          exit 1; \
+        fi
+	( $(LDPAR) $(LDFLG) -o $(PROGRAM)_all $(DATAOBJ) $(UTILOBJ) $(EXTOBJ) \
+                                    $(PUBLICUTILS) $(SRCOBJ) $(ASSOBJ) $(SATOBJ) $(LIB) )
+#
+nudexe:  $(OBJDIR) $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ) $(ASSOBJ)
+	echo linking parallel program
+	if [ -f $(SRCDIR)/mpif.h ]; then \
+          echo "ERROR: there is an mpif.h in src/ !"; \
+          exit 1; \
+        fi
+	( $(LDPAR) $(LDFLG) -o $(PROGRAM)_nud $(DATAOBJ) $(UTILOBJ) $(EXTOBJ) \
+                                    $(PUBLICUTILS) $(SRCOBJ) $(ASSOBJ) $(LIB) )
+#
+satexe:  $(OBJDIR) $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ) $(SATOBJ)
+	echo linking parallel program
+	if [ -f $(SRCDIR)/mpif.h ]; then \
+          echo "ERROR: there is an mpif.h in src/ !"; \
+          exit 1; \
+        fi
+	( $(LDPAR) $(LDFLG) -o $(PROGRAM)_sat $(DATAOBJ) $(UTILOBJ) $(EXTOBJ) \
+                                    $(PUBLICUTILS) $(SRCOBJ) $(SATOBJ) $(LIB) )
+#
+seqexe:  $(OBJDIR) $(DATAOBJ) $(PUBLICUTILS) $(UTILOBJ) $(EXTOBJ) $(SRCOBJ) \
+         $(OBJDIR)/dummy_mpi.o
+	echo linking sequential program
+	if [ ! -f $(SRCDIR)/mpif.h ]; then  \
+          echo "ERROR: mpif.h is not contained in src/ !";  \
+          exit 1;  \
+        fi
+	( $(LDSEQ) $(LDFLG) -o $(PROGRAM)_seq $(DATAOBJ) $(PUBLICUTILS)         \
+         $(UTILOBJ) $(OBJDIR)/dummy_mpi.o $(EXTOBJ) $(SRCOBJ) $(LIB) )
+#
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+#
+addmods:
+	for DATEI in `ls -x $(WORKDIR)` ; do \
+	   cp -p $(WORKDIR)/$${DATEI}  $(SRCDIR) ; \
+	done
+#
+clean:
+	echo cleaning up
+	rm -f $(PROGRAM)*
+	rm -f $(OBJDIR)/*.o
+	rm -f $(OBJDIR)/i.*
+	rm -f $(OBJDIR)/*.T
+	rm -f $(OBJDIR)/*.L
+	rm -f $(OBJDIR)/*.mod
+	rm -f $(OBJDIR)/*.lst
+#
+####################################################
+#
+#     Dependencies of the Data Modules
+#
+####################################################
+
+include ObjDependencies.twomom

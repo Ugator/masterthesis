@@ -1,0 +1,21 @@
+#########
+#  Portland Group
+#########
+#
+F90          = pgf90 -c -Mpreprocess
+#
+COMFLG1      = -fast -fastsse -O3 -Mvect -Mcray=pointer
+COMFLG2      = -fast -fastsse -O3 -Mvect -Mcray=pointer
+COMFLG3      = -fast -fastsse -O3 -Mvect -Mcray=pointer
+COMFLG4      = -fast -fastsse -O3 -Mvect -Mcray=pointer
+#
+# linker
+LDPAR        = mpi90
+LDSEQ        = pgf90
+LDFLG        = 
+#
+# standard binary
+PROGRAM      = lmparbin
+#
+LIB          = 
+#

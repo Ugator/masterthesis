@@ -1,0 +1,24 @@
+#########
+#  Intel
+#########
+#
+F90          = ifort -c
+#
+# F90          = gfortran -c  -x f95-cpp-input
+#  -x f95-cpp-input:   apply C-preprocessor to every file (not only .F90)
+# LDSEQ        = gfortran
+#
+COMFLG1      = -O2
+COMFLG2      = -O2
+COMFLG3      = -O2
+COMFLG4      = -O2
+#
+# linker
+#LDPAR        =
+LDSEQ        = ifort -static
+#
+# standard binary
+PROGRAM      = lmseqbin
+#
+LIB          =  /home/uschaett/NEW_PACKAGE/DWD-libgrib1_060516/libgrib1.a
+#

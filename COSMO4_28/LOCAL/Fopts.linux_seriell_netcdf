@@ -1,0 +1,43 @@
+### Standard binary:
+PROGRAM = lmparbin
+
+#########################
+#  Single processor linux
+#########################
+# compiler
+
+### Add globally used preprocessor switches:
+FPPSWITCHES  = -DHAS_LPERI_XY -DSAVE_CONVERSIONRATES -DSEDI_VECTORIZED \
+	       -DSAVE_PRECIPSTATISTICS -DMPI_CLOUD -DCGP_SEARCH_VEC
+
+# DUMMY_MPI nur bei Seriellem programm ohne MPI!!!!
+F90          = ifort -c -fpp -check all -check noarg_temp_created -traceback -Vaxlib $(FPPSWITCHES)
+### better for debugging:
+#F90         = ifort -c -fpp -check bounds -check uninit -check format \
+#                 -check output_conversion -check pointers -fpe0 -traceback -Vaxlib $(FPPSWITCHES)
+
+### Fortran preprocessor:
+FPP  = fpp -P -free $(FPPSWITCHES)
+
+#
+# linker
+LDPAR        = ifort
+LDSEQ        = ifort
+
+#
+#
+#
+# compile-flags
+COMFLG       = -fpp -O0    -save
+COMFLG2      = -fpp -O0    -save
+COMFLG3      = -fpp -O0    -save
+COMFLG4      = -fpp -O0    -save
+COMFLG5      = -fpp -O0    -save
+#
+# link-flags
+LDFLG        = 
+
+LIB	      = $(HOME)/LM/lib/libnewgrib1.a \
+                $(HOME)/LM/lib/libmisc.a
+
+NCDFLIB       = $(NCDFDIR)/lib/libnetcdf.a

@@ -1,0 +1,65 @@
+#
+#  change compiler, options and libraries according to your needs
+#
+#########
+#  CCLM on blizzard (IBM) at DKRZ Hamburg
+#########
+
+# modules and libraries
+#
+MPIINC  = -I/usr/lpp/ppe.poe/include -I/usr/lpp/ppe.poe/include/thread64
+LPATH   = -L/usr/lib -L/sw/aix61/netcdf-4.1.1-rc2/lib
+OTHLIBS1= -L/usr/lib -lessl -lmass -L/sw/aix53/lapack-3.2.0/lib -llapack -lblas
+#
+# might be possible that the following libs are needed in context of hdf5 format and data compression within this format
+#
+OTHLIBS2= -L/sw/aix61/hdf5-1.8.4-patch1/lib -lhdf5_hl -lhdf5  -L /sw/aix53/zlib-1.2.3/lib -lz -L/sw/aix53/szip-2.1/lib -lsz
+LIBS    =  /pf/b/b305023/libs_jan/reanalysis/lib/libnetcdf.a /pf/b/b305023/RTTOV10/radiance10.2/libradiance10.2.a /pf/b/b305023/RTTOV10/rttov10.2/librttov10.2.a 
+#LIBS = -lnetcdf
+#
+#NC_INCLUDE  =  -I/sw/aix61/netcdf-4.1.1-rc2/include
+NC_INCLUDE  =  -I/pf/b/b305023/libs_jan/reanalysis/include \
+               -I/pf/b/b305023/RTTOV10/rttov10.2/include \
+               -I/pf/b/b305023/RTTOV10/rttov10.2/obj \
+               -I/pf/b/b305023/RTTOV10/radiance10.2/obj \
+#
+# GRIB_LIB defines a working GRIBLIB
+#
+GRIB_LIB = /pf/b/b305023/libgribdwd/libgrib1.a
+#GRIB_LIB = /pf/b/b364034/Programme/Libs/DWD_libgrib1/DWD-libgrib1_061107/libgrib1.a
+#
+# standard binary
+PROGRAM      = lmparbin
+#
+# compiler, options and libraries
+#
+F90          = mpxlf95_r $(MPIINC) ${NC_INCLUDE} -I$(SRCDIR) -WF,-DGRIBDWD -WF,-DNETCDF -WF,-DNUDGING -WF,-DRTTOV10
+#
+# it is recommended to use optimization level -O2 instead of -O3 or even higher; an unexplainable crash of CCLM might occur with -O3 or higher
+# experience shows that there is no loss of performnce when -O2 is used
+#
+#COMFLG        = -c -q64 -qsuffix=cpp=f90 -qmaxmem=-1 -O2 -qstrict -qarch=pwr6 -qtune=pwr6 -qextname -WF,-D__AIX,-D_AIX,-DIBM,-D__ibm__,-Dextname,-D_EXTNAME
+COMFLG        = -c -q64 -qsuffix=cpp=f90 -qmaxmem=-1 -O2 -qstrict -qarch=pwr6 -qtune=pwr6
+
+
+COMFLG1      = $(COMFLG)
+COMFLG2      = $(COMFLG)
+COMFLG3      = $(COMFLG)
+#
+# Compile src_setup_vartab.f90 with optimization level -O0; speeds up the compilation very much!!
+#
+#COMFLG4       = -c -q64 -qsuffix=cpp=f90 -qmaxmem=-1 -O0 -qarch=pwr6 -qtune=pwr6 -qextname -WF,-D__AIX,-D_AIX,-DIBM,-D__ibm__,-Dextname,-D_EXTNAME
+COMFLG4       = -c -q64 -qsuffix=cpp=f90 -qmaxmem=-1 -O0 -qarch=pwr6 -qtune=pwr6
+
+#
+LDSEQ        = mpxlf95_r 
+LDPAR        = mpxlf95_r 
+#
+# see the comments above related to the IBM recommended new compiler version and its options
+# for the next two lines
+#
+#LDSEQ        = mpxlf95_r  -tchbI -B/sw/ibm/xlf/12.1.0.6_p6div/100305a/exe/ -qxflag=p6div -qxflag=p6divmsg
+#LDPAR        = mpxlf95_r -tchbI -B/sw/ibm/xlf/12.1.0.6_p6div/100305a/exe/ -qxflag=p6div -qxflag=p6divmsg
+#
+LDFLG        = -q64 -qextname  -I$(SRCDIR)
+LIB          = ${LPATH} ${GRIB_LIB} ${LIBS} ${OTHLIBS1} ${OTHLIBS2}
