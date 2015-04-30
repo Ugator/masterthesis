@@ -709,6 +709,38 @@ BENCH_END(set_phys_bc_tim)
                              , f_flux                           &
                             )
 
+!-----------------------------------------------------------
+! JDB Nailit: Accumulate physics' tendencies ! while they are uncoupled with mass and uncoupled from map factor
+! Note: after part2, ru_tend is coupled with mass 
+!-----------------------------------------------------------
+IF ( config_flags%initend ==1) then 
+!   DO jj = jps, MIN(jpe,jde-1)
+!      DO kk = kps, MIN(kpe,kde-1)
+!         DO ii = ips, MIN(ipe,ide-1)
+   !$OMP PARALLEL DO   &
+   !$OMP PRIVATE ( ij ii kk jj )
+   DO ij = 1 , grid%num_tiles
+    DO jj = grid%j_start(ij), min(grid%j_end(ij),jde-1)
+      DO kk = k_start, min(k_end,kde-1)
+         DO ii = grid%i_start(ij), min(grid%i_end(ij),ide-1)
+            grid%RTHCUTEN_ACC(ii,kk,jj)     = grid%RTHCUTEN_ACC(ii,kk,jj)     + grid%RTHCUTEN(ii,kk,jj)
+            grid%RTHSHTEN_ACC(ii,kk,jj)     = grid%RTHSHTEN_ACC(ii,kk,jj)     + grid%RTHSHTEN(ii,kk,jj)
+            grid%RTHRATEN_ACC(ii,kk,jj)     = grid%RTHRATEN_ACC(ii,kk,jj)     + grid%RTHRATEN(ii,kk,jj)
+            grid%RTHBLTEN_ACC(ii,kk,jj)     = grid%RTHBLTEN_ACC(ii,kk,jj)     + grid%RTHBLTEN(ii,kk,jj)
+            grid%RUCUTEN_ACC(ii,kk,jj)      = grid%RUCUTEN_ACC(ii,kk,jj)      + grid%RUCUTEN(ii,kk,jj)
+            grid%RUSHTEN_ACC(ii,kk,jj)      = grid%RUSHTEN_ACC(ii,kk,jj)      + grid%RUSHTEN(ii,kk,jj)
+            grid%RUBLTEN_ACC(ii,kk,jj)      = grid%RUBLTEN_ACC(ii,kk,jj)      + grid%RUBLTEN(ii,kk,jj)
+            grid%RVCUTEN_ACC(ii,kk,jj)      = grid%RVCUTEN_ACC(ii,kk,jj)      + grid%RVCUTEN(ii,kk,jj)
+            grid%RVSHTEN_ACC(ii,kk,jj)      = grid%RVSHTEN_ACC(ii,kk,jj)      + grid%RVSHTEN(ii,kk,jj)
+            grid%RVBLTEN_ACC(ii,kk,jj)      = grid%RVBLTEN_ACC(ii,kk,jj)      + grid%RVBLTEN(ii,kk,jj)
+        ENDDO
+     ENDDO
+   ENDDO
+   END DO
+  !$OMP END PARALLEL DO
+endif
+!-----------------------------------------------------------
+
 #ifdef DM_PARALLEL
        IF ( config_flags%bl_pbl_physics == MYNNPBLSCHEME2 .OR. &
             config_flags%bl_pbl_physics == MYNNPBLSCHEME3 ) THEN
@@ -748,8 +780,26 @@ BENCH_END(set_phys_bc_tim)
 
 BENCH_START(rk_tend_tim)
      !$OMP PARALLEL DO   &
-     !$OMP PRIVATE ( ij )
+     !$OMP PRIVATE ( ij ii kk jj )
      DO ij = 1 , grid%num_tiles
+ 
+!-----------------------------------------------------------
+!  JDB Nailit: Tendendy from horizontal diffusion 
+!-----------------------------------------------------------
+      if (rk_step==1) then 
+        IF ( config_flags%initend ==1) then 
+         DO jj = grid%j_start(ij), min(grid%j_end(ij),jde-1)
+          DO kk = k_start, min(k_end,kde-1)
+            DO ii = grid%i_start(ij), min(grid%i_end(ij),ide-1)
+              grid%ru_tendf_diff(ii,kk,jj)=ru_tendf(ii,kk,jj)
+               grid%rv_tendf_diff(ii,kk,jj)=rv_tendf(ii,kk,jj)
+               grid%t_tendf_diff(ii,kk,jj) =t_tendf(ii,kk,jj)
+            ENDDO
+           ENDDO
+        ENDDO
+       ENDIF
+     ENDIF
+!-----------------------------------------------------------
 
        CALL wrf_debug ( 200 , ' call rk_tendency' )
        CALL rk_tendency ( config_flags, rk_step                                                                &
@@ -783,6 +833,29 @@ BENCH_START(rk_tend_tim)
      END DO
      !$OMP END PARALLEL DO
 BENCH_END(rk_tend_tim)
+
+!-----------------------------------------------------------
+!  JDB Nailit: Tendendy from horizontal diffusion 
+!-----------------------------------------------------------
+     !$OMP PARALLEL DO   &
+     !$OMP PRIVATE ( ij ii kk jj )
+     DO ij = 1 , grid%num_tiles
+     if (rk_step==1) then 
+       IF ( config_flags%initend ==1) then 
+         DO jj = grid%j_start(ij), min(grid%j_end(ij),jde-1)
+          DO kk = k_start, min(k_end,kde-1)
+            DO ii = grid%i_start(ij), min(grid%i_end(ij),ide-1)
+                grid%ru_tendf_diff(ii,kk,jj)=ru_tendf(ii,kk,jj)-grid%ru_tendf_diff(ii,kk,jj)
+                grid%rv_tendf_diff(ii,kk,jj)=rv_tendf(ii,kk,jj)-grid%rv_tendf_diff(ii,kk,jj)
+                grid%t_tendf_diff(ii,kk,jj) = t_tendf(ii,kk,jj)-grid%t_tendf_diff(ii,kk,jj)
+             ENDDO
+           ENDDO
+         ENDDO
+       ENDIF
+     ENDIF
+     END DO
+     !$OMP END PARALLEL DO
+!-----------------------------------------------------------
 
      IF (config_flags%use_adaptive_time_step) THEN
        DO ij = 1 , grid%num_tiles
@@ -962,11 +1035,12 @@ BENCH_START(small_step_prep_tim)
                              grid%mut, grid%muts, grid%mudf,                          &
                              grid%u_save, grid%v_save, w_save,                        &
                              grid%t_save, ph_save, mu_save,                           &
+                             grid%t_tend_dyn, grid%ru_tend_dyn, grid%rv_tend_dyn,     & 
                              grid%ww, ww1,                                            &
                              grid%dnw, c2a, grid%pb, grid%p, grid%alt,                &
                              grid%msfux,grid%msfuy, grid%msfvx, grid%msfvx_inv,       &
                              grid%msfvy, grid%msftx,grid%msfty,                       &
-                             grid%rdx, grid%rdy, rk_step,                             &
+                             grid%rdx, grid%rdy, rk_step, config_flags%initend,       &
                              ids, ide, jds, jde, kds, kde,                            &
                              ims, ime, jms, jme, kms, kme,                            &
                              grid%i_start(ij), grid%i_end(ij),                        &
@@ -1584,6 +1658,9 @@ BENCH_END(calc_mu_uv_tim)
 BENCH_START(small_step_finish_tim)
        CALL small_step_finish( grid%u_2, grid%u_1, grid%v_2, grid%v_1, grid%w_2, grid%w_1,     &
                                grid%t_2, grid%t_1, grid%ph_2, grid%ph_1, grid%ww, ww1,    &
+                               grid%t_tend_dyn,t_tend,t_tendf,                  &
+                               grid%ru_tend_dyn,grid%ru_tend,ru_tendf,    &
+                               grid%rv_tend_dyn,grid%rv_tend,rv_tendf,    &
                                grid%mu_2, grid%mu_1,                       &
                                grid%mut, grid%muts, grid%muu, muus, grid%muv, muvs,  & 
                                grid%u_save, grid%v_save, w_save,           &
@@ -1592,6 +1669,7 @@ BENCH_START(small_step_finish_tim)
                                grid%h_diabatic,                       &
                                number_of_small_timesteps,dts_rk, &
                                rk_step, rk_order,                &
+                               config_flags%initend,             & 
                                ids, ide, jds, jde, kds, kde,     &
                                ims, ime, jms, jme, kms, kme,     &
                                grid%i_start(ij), grid%i_end(ij), &
@@ -4016,6 +4094,31 @@ BENCH_END(bc_2d_tim)
 
    END DO
    !$OMP END PARALLEL DO
+
+!-----------------------------------------------------------
+!  JDB Nailit: Accumulate dynamics' tendencies
+!-----------------------------------------------------------
+IF ( config_flags%initend ==1) then 
+   !$OMP PARALLEL DO   &
+   !$OMP PRIVATE ( ij ii kk jj )
+   DO ij = 1 , grid%num_tiles
+    DO jj = grid%j_start(ij), min(grid%j_end(ij),jde-1)
+      DO kk = k_start, min(k_end,kde-1)
+         DO ii = grid%i_start(ij), min(grid%i_end(ij),ide-1)
+            grid%h_diabatic_acc(ii,kk,jj)   = grid%h_diabatic_acc(ii,kk,jj)   + grid%h_diabatic(ii,kk,jj)
+            grid%t_tend_dyn_acc(ii,kk,jj)   = grid%t_tend_dyn_acc(ii,kk,jj)   + grid%t_tend_dyn(ii,kk,jj)/grid%msfty(ii,jj) + & 
+                   + grid%t_tendf_diff(ii,kk,jj)/(grid%mu_2(ii,jj)+grid%mub(ii,jj))
+             grid%ru_tend_dyn_acc(ii,kk,jj)  = grid%ru_tend_dyn_acc(ii,kk,jj) + grid%ru_tend_dyn(ii,kk,jj)/grid%msfuy(i,j) + & 
+                   + grid%ru_tendf_diff(ii,kk,jj)/(0.5*(grid%mu_2(ii,jj)+grid%mu_2(ii-1,jj) + grid%mub(ii,jj)+grid%mub(ii-1,jj)))
+            grid%rv_tend_dyn_acc(ii,kk,jj)  = grid%rv_tend_dyn_acc(ii,kk,jj) + grid%rv_tend_dyn(ii,kk,jj)/grid%msfvx(i,j) + & 
+                   + grid%rv_tendf_diff(ii,kk,jj)/(0.5*(grid%mu_2(ii,jj)+grid%mu_2(ii,jj-1) + grid%mub(ii,jj)+grid%mub(ii,jj-1)))
+        ENDDO
+     ENDDO
+   ENDDO
+   ENDDO
+   !$OMP END PARALLEL DO
+endif
+
 
 !-----------------------------------------------------------
 !  After all of the RK steps, after the microphysics, after p-rho-phi,

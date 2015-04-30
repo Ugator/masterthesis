@@ -1,0 +1,9 @@
+ &time_control
+ auxhist20_outname                    = "init_tend_enkf"
+ frames_per_auxhist20                 = 1000,
+ io_form_auxhist20                    = 2,
+ auxhist20_interval_s                 = 3600,
+ /
+
+ &physics
+ initend                             = 1

@@ -1,0 +1,27 @@
+# Initial tendencies, for ARW only
+
+state  real  ru_tend_dyn     ikj     dyn_em      1   X   irdus        "RU_TEND_DYN"     "U dynamic tendency" "m s-2"
+state  real  ru_tend_dyn_acc ikj     dyn_em      1   X   irh{20}dus   "RU_TEND_DYN_ACC" "ACC. U dynamic tendency" "m s-2"
+state  real  ru_tendf_diff   ikj     dyn_em      1   -   irhdus   "RU_TENDF_DIFF"    "U tendency from horizontal diffusion" "m s-2"
+state  real  rv_tend_dyn     ikj     dyn_em      1   Y   irdus        "RV_TEND_DYN"     "V dynamic tendency" "m s-2"
+state  real  rv_tend_dyn_acc ikj     dyn_em      1   Y   irh{20}dus   "RV_TEND_DYN_ACC" "ACC. V dynamic tendency" "m s-2"
+state  real  rv_tendf_diff   ikj     dyn_em      1   -   irhdus   "RV_TENDF_DIFF"    "V tendency from horizontal diffusion" "m s-2"
+state  real  t_tend_dyn      ikj     dyn_em      1   -   irdus        "T_TEND_DYN"      "Dynamical theta tendency" "K s-1"
+state  real  t_tend_dyn_acc  ikj     dyn_em      1   -   irh{20}dus   "T_TEND_DYN_ACC"  "ACC. Dynamical theta tendency" "K s-1"
+state  real  t_tendf_diff    ikj     dyn_em      1   -   irhdus   "T_TENDF_DIFF"     "Theta tendency from horizontal diffusio" "K s-1"
+state  real  h_diabatic_acc  ikj     misc        1   -   irh{20}dus   "h_diabatic_acc"  "ACC. MICROPHYSICS tendency"         "K s-1"      
+state  real  RUSHTEN_ACC     ikj     misc        1   -   irhdus       "RUSHTEN_ACC"     "ACC. X WIND TENDENCY DUE TO SHALLOW CUMULUS SCHEME"   "Pa m s-2"
+state  real  RVSHTEN_ACC     ikj     misc        1   -   irhdus       "RVSHTEN_ACC"     "ACC. Y WIND TENDENCY DUE TO SHALLOW CUMULUS SCHEME"   "Pa m s-2"
+state  real  RTHSHTEN_ACC    ikj     misc        1   -   irhdus       "RTHSHTEN_ACC"    "ACC. THETA TENDENCY DUE TO SHALLOW CUMULUS SCHEME"    "Pa K s-1"
+state  real  RUCUTEN_ACC     ikj     misc        1   -   irh{20}dus   "RUCUTEN_ACC"     "ACC. X WIND TENDENCY DUE TO CUMULUS PARAMETERIZATION"  "Pa m s-2"
+state  real  RVCUTEN_ACC     ikj     misc        1   -   irh{20}dus   "RVCUTEN_ACC"     "ACC. Y WIND TENDENCY DUE TO CUMULUS PARAMETERIZATION"  "Pa m s-2"
+state  real  RTHCUTEN_ACC    ikj     misc        1   -   irh{20}dus   "RTHCUTEN_ACC"    "ACC. THETA  TENDENCY DUE TO CUMULUS SCHEME"     "Pa K s-1"
+state  real  RTHRATEN_ACC    ikj     misc        1   -   irh{20}dus   "RTHRATEN_ACC"    "ACC. THETA  TENDENCY DUE TO RADIATION"              "Pa K s-1"
+state  real  RUBLTEN_ACC     ikj     misc        1   -   irh{20}dus   "RUBLTEN_ACC"     "ACC. X WIND TENDENCY DUE TO PBL PARAMETERIZATION"  "Pa m s-2"
+state  real  RVBLTEN_ACC     ikj     misc        1   -   irh{20}dus   "RVBLTEN_ACC"     "ACC. Y WIND TENDENCY DUE TO PBL PARAMETERIZATION"  "Pa m s-2"
+state  real  RTHBLTEN_ACC    ikj     misc        1   -   irh{20}dus   "RTHBLTEN_ACC"    "ACC. THETA  TENDENCY DUE TO PBL PARAMETERIZATION"   "Pa K s-1"
+rconfig  integer initend namelist,physics  1     0    - "initial tendency output" "outut acc. tendencies  0=no, 1=yes"  ""
+
+package   initial_tendencies initend==1   -  state:ru_tend_dyn_acc,rv_tend_dyn_acc,t_tend_dyn_acc,h_diabatic_acc,RUSHTEN_ACC,RVSHTEN_ACC,RTHSHTEN_ACC,RUCUTEN_ACC,RVCUTEN_ACC,RTHCUTEN_ACC,RTHRATEN_ACC,RUBLTEN_ACC,RVBLTEN_ACC,RTHBLTEN_ACC,RU_TENDF_DIFF,RV_TENDF_DIFF,T_TENDF_DIFF
+
+

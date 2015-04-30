@@ -21,13 +21,15 @@ SUBROUTINE small_step_prep( u_1, u_2, v_1, v_2, w_1, w_2, &
                             mut, muts, mudf,              &
                             u_save, v_save, w_save,       &
                             t_save, ph_save, mu_save,     &
+                            t_tend_dyn,ru_tend_dyn,       &
+                            rv_tend_dyn,                  &
                             ww, ww_save,                  &
                             dnw, c2a, pb, p, alt,         &
                             msfux, msfuy, msfvx,          &
                             msfvx_inv,                    &
                             msfvy, msftx, msfty,          &
                             rdx, rdy,                     &
-                            rk_step,                      &
+                            rk_step, initend,             &
                             ids,ide, jds,jde, kds,kde,    & 
                             ims,ime, jms,jme, kms,kme,    &
                             its,ite, jts,jte, kts,kte    )
@@ -36,11 +38,13 @@ SUBROUTINE small_step_prep( u_1, u_2, v_1, v_2, w_1, w_2, &
 
 ! declarations for the stuff coming in
 
+
   INTEGER,      INTENT(IN   )    :: ids,ide, jds,jde, kds,kde
   INTEGER,      INTENT(IN   )    :: ims,ime, jms,jme, kms,kme
   INTEGER,      INTENT(IN   )    :: its,ite, jts,jte, kts,kte
 
   INTEGER,      INTENT(IN   )    :: rk_step
+  INTEGER,      INTENT(IN   )    :: initend
 
   REAL, DIMENSION(ims:ime, kms:kme, jms:jme),INTENT(INOUT) :: u_1,   &
                                                               v_1,   &
@@ -58,7 +62,10 @@ SUBROUTINE small_step_prep( u_1, u_2, v_1, v_2, w_1, w_2, &
                                                               v_2,   &
                                                               w_2,   &
                                                               t_2,   &
-                                                              ph_2
+                                                              ph_2,  &
+                                                              t_tend_dyn,& 
+                                                              ru_tend_dyn,& 
+                                                              rv_tend_dyn  
 
   REAL, DIMENSION(ims:ime, kms:kme, jms:jme), INTENT(  OUT) :: c2a, &
                                                                ww_save
@@ -137,6 +144,9 @@ SUBROUTINE small_step_prep( u_1, u_2, v_1, v_2, w_1, w_2, &
       DO j=j_start, j_end
       DO k=k_start, k_end
       DO i=i_start, i_endu
+        !KRF: Mods for INIT TEND
+        ru_tend_dyn(i,k,j)=0.
+        !END KRF 
         u_1(i,k,j) = u_2(i,k,j)
       ENDDO
       ENDDO
@@ -145,6 +155,9 @@ SUBROUTINE small_step_prep( u_1, u_2, v_1, v_2, w_1, w_2, &
       DO j=j_start, j_endv
       DO k=k_start, k_end
       DO i=i_start, i_end
+        !KRF: Mods for INIT TEND
+        rv_tend_dyn(i,k,j)=0.
+        !END KRF 
         v_1(i,k,j) = v_2(i,k,j)
       ENDDO
       ENDDO
@@ -153,6 +166,9 @@ SUBROUTINE small_step_prep( u_1, u_2, v_1, v_2, w_1, w_2, &
       DO j=j_start, j_end
       DO k=k_start, k_end
       DO i=i_start, i_end
+        !KRF: Mods for INIT TEND
+!        t_tend_dyn(i,k,j)=0.
+        !END KRF 
         t_1(i,k,j) = t_2(i,k,j)
       ENDDO
       ENDDO
@@ -294,9 +310,11 @@ END SUBROUTINE small_step_prep
 
 !-------------------------------------------------------------------------
 
-
 SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
                               t_2, t_1, ph_2, ph_1, ww, ww1,   &
+                              t_tend_dyn,t_tend,t_tendf,       & 
+                              ru_tend_dyn,ru_tend,ru_tendf,    & 
+                              rv_tend_dyn,rv_tend,rv_tendf,    & 
                               mu_2, mu_1,                      &
                               mut, muts, muu, muus, muv, muvs, &
                               u_save, v_save, w_save,          &
@@ -306,6 +324,7 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
                               h_diabatic,                      &
                               number_of_small_timesteps,dts,   &
                               rk_step, rk_order,               &
+                              initend,                         & 
                               ids,ide, jds,jde, kds,kde,       &
                               ims,ime, jms,jme, kms,kme,       &
                               its,ite, jts,jte, kts,kte       )
@@ -315,10 +334,12 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
 
 !  stuff passed in
 
+
   INTEGER,                  INTENT(IN   ) :: ids,ide, jds,jde, kds,kde
   INTEGER,                  INTENT(IN   ) :: ims,ime, jms,jme, kms,kme
   INTEGER,                  INTENT(IN   ) :: its,ite, jts,jte, kts,kte
   INTEGER,                  INTENT(IN   ) :: number_of_small_timesteps
+  INTEGER,                  INTENT(IN   ) :: initend
   INTEGER,                  INTENT(IN   ) :: rk_step, rk_order
   REAL,                     INTENT(IN   ) :: dts
 
@@ -334,7 +355,17 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
                                                                  w_2, &
                                                                  t_2, &
                                                                  ww,  &
-                                                                 ph_2
+                                                                 ph_2,&
+                                                                 t_tend_dyn, &
+                                                                 t_tend,     &
+                                                                 t_tendf,    & 
+                                                                 ru_tend_dyn,&
+                                                                 ru_tend,    &
+                                                                 ru_tendf,   & 
+                                                                 rv_tend_dyn,&
+                                                                 rv_tend,    &
+                                                                 rv_tendf
+
 
   REAL, DIMENSION(ims:ime, kms:kme, jms:jme),INTENT(IN   ) :: u_save,   &
                                                               v_save,   &
@@ -353,6 +384,12 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
 
 
 ! local stuff
+  REAL,   DIMENSION(ims:ime, kms:kme, jms:jme)                :: t_tend_small, &
+                                                                 t_tend_large, & 
+                                                                 ru_tend_large,& 
+                                                                 ru_tend_small,&  
+                                                                 rv_tend_large,& 
+                                                                 rv_tend_small    
 
   INTEGER         :: i,j,k
   INTEGER :: i_start, i_end, j_start, j_end, i_endu, j_endv
@@ -379,6 +416,14 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
   DO i = i_start, i_end
     ! v coupled with mx
     v_2(i,k,j) = (msfvx(i,j)*v_2(i,k,j) + v_save(i,k,j)*muv(i,j))/muvs(i,j)
+       ! KRF: Mods for INIT TEND
+       IF ( initend ==1) then 
+        rv_tend_small(i,k,j)=(v_2(i,k,j)-v_1(i,k,j))/(dts*number_of_small_timesteps)&
+                            -(rv_tend(i,k,j)/mut(i,j))
+        rv_tend_large(i,k,j)=(rv_tend(i,k,j)/mut(i,j))-(rv_tendf(i,k,j)/mut(i,j))
+        rv_tend_dyn(i,k,j)  = rv_tend_large(i,k,j)+rv_tend_small(i,k,j)
+       ENDIF
+       !END KRF
   ENDDO
   ENDDO
   ENDDO
@@ -388,6 +433,14 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
   DO i = i_start, i_endu
     ! u coupled with my
     u_2(i,k,j) = (msfuy(i,j)*u_2(i,k,j) + u_save(i,k,j)*muu(i,j))/muus(i,j)
+       ! KRF: Mods for INIT TEND
+       IF ( initend ==1) then 
+        ru_tend_small(i,k,j)=(u_2(i,k,j)-u_1(i,k,j))/(dts*number_of_small_timesteps)&
+                            -(ru_tend(i,k,j)/mut(i,j))
+        ru_tend_large(i,k,j)=(ru_tend(i,k,j)/mut(i,j))-(ru_tendf(i,k,j)/mut(i,j))
+        ru_tend_dyn(i,k,j)  = ru_tend_large(i,k,j)+ru_tend_small(i,k,j)
+       ENDIF
+       !END KRF
   ENDDO
   ENDDO
   ENDDO
@@ -427,6 +480,14 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
     DO i = i_start, i_end
       t_2(i,k,j) = (t_2(i,k,j) - dts*number_of_small_timesteps*mut(i,j)*h_diabatic(i,k,j) &
                     + t_save(i,k,j)*mut(i,j))/muts(i,j)
+      ! KRF: Mods for INIT TEND
+       IF ( initend ==1) then 
+        t_tend_small(i,k,j)=(t_2(i,k,j)-t_1(i,k,j))/(dts*number_of_small_timesteps)&
+                          -(t_tend(i,k,j)/mut(i,j))
+        t_tend_large(i,k,j)=(t_tend(i,k,j)/mut(i,j))-(t_tendf(i,k,j)/mut(i,j))
+        t_tend_dyn(i,k,j)= t_tend_large(i,k,j)+t_tend_small(i,k,j)
+        ENDIF
+       !END KRF
     ENDDO
     ENDDO
     ENDDO
