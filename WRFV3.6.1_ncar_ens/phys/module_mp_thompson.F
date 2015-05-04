@@ -989,7 +989,7 @@
 !+---+-----------------------------------------------------------------+
 !..This is a wrapper routine designed to transfer values from 3D to 1D.
 !+---+-----------------------------------------------------------------+
-      SUBROUTINE mp_gt_driver(qv, qc, qr, qi, qs, qg, ni, nr, nc,       &
+      SUBROUTINE mp_gt_driver(t_entr_tend,qv, qc, qr, qi, qs, qg, ni, nr, nc,       &
                               nwfa, nifa, nwfa2d,                       &
                               th, pii, p, w, dz, dt_in, itimestep,      &
                               RAINNC, RAINNCV, &
@@ -1012,7 +1012,7 @@
                             ims,ime, jms,jme, kms,kme, &
                             its,ite, jts,jte, kts,kte
       REAL, DIMENSION(ims:ime, kms:kme, jms:jme), INTENT(INOUT):: &
-                          qv, qc, qr, qi, qs, qg, ni, nr, th
+                          qv, qc, qr, qi, qs, qg, ni, nr, th,t_entr_tend
       REAL, DIMENSION(ims:ime, kms:kme, jms:jme), OPTIONAL, INTENT(INOUT):: &
                           nc, nwfa, nifa
       REAL, DIMENSION(ims:ime, jms:jme), OPTIONAL, INTENT(IN):: nwfa2d
@@ -1038,7 +1038,7 @@
       REAL, DIMENSION(kts:kte):: &
                           qv1d, qc1d, qi1d, qr1d, qs1d, qg1d, ni1d,     &
                           nr1d, nc1d, nwfa1d, nifa1d,                   &
-                          t1d, p1d, w1d, dz1d, dBZ
+                          t1d, p1d, w1d, dz1d, dBZ, t_entr_tend1d
       REAL, DIMENSION(kts:kte):: re_qc1d, re_qi1d, re_qs1d
 #if ( WRF_CHEM == 1 )
       REAL, DIMENSION(kts:kte):: &
@@ -1141,6 +1141,7 @@
             qg1d(k) = qg(i,k,j)
             ni1d(k) = ni(i,k,j)
             nr1d(k) = nr(i,k,j)
+            t_entr_tend1d(k) = t_entr_tend(i,k,j)
          enddo
          if (is_aerosol_aware) then
             do k = kts, kte
@@ -1158,7 +1159,7 @@
             nwfa1 = 11.1E6
          endif
 
-         call mp_thompson(qv1d, qc1d, qi1d, qr1d, qs1d, qg1d, ni1d,     &
+         call mp_thompson(t_entr_tend1d,qv1d, qc1d, qi1d, qr1d, qs1d, qg1d, ni1d,     &
                       nr1d, nc1d, nwfa1d, nifa1d, t1d, p1d, w1d, dz1d,  &
                       pptrain, pptsnow, pptgraul, pptice, &
 #if ( WRF_CHEM == 1 )
@@ -1353,7 +1354,7 @@
 !.. Thompson et al. (2004, 2008).
 !+---+-----------------------------------------------------------------+
 !
-      subroutine mp_thompson (qv1d, qc1d, qi1d, qr1d, qs1d, qg1d, ni1d, &
+      subroutine mp_thompson (t_entr_tend1d,qv1d, qc1d, qi1d, qr1d, qs1d, qg1d, ni1d, &
                           nr1d, nc1d, nwfa1d, nifa1d, t1d, p1d, w1d, dzq, &
                           pptrain, pptsnow, pptgraul, pptice, &
 #if ( WRF_CHEM == 1 )
@@ -1367,7 +1368,7 @@
       INTEGER, INTENT(IN):: kts, kte, ii, jj
       REAL, DIMENSION(kts:kte), INTENT(INOUT):: &
                           qv1d, qc1d, qi1d, qr1d, qs1d, qg1d, ni1d, &
-                          nr1d, nc1d, nwfa1d, nifa1d, t1d
+                          nr1d, nc1d, nwfa1d, nifa1d, t1d,t_entr_tend1d
       REAL, DIMENSION(kts:kte), INTENT(IN):: p1d, w1d, dzq
       REAL, INTENT(INOUT):: pptrain, pptsnow, pptgraul, pptice
       REAL, INTENT(IN):: dt
@@ -1584,6 +1585,9 @@
 !+---+-----------------------------------------------------------------+
       do k = kts, kte
          temp(k) = t1d(k)
+!FLO
+         t_entr_tend1d(k)=temp(k)
+!end
          qv(k) = MAX(1.E-10, qv1d(k))
          pres(k) = p1d(k)
          rho(k) = 0.622*pres(k)/(R*temp(k)*(qv(k)+0.622))

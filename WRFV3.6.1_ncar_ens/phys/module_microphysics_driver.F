@@ -5,7 +5,8 @@ MODULE module_microphysics_driver
 CONTAINS
 
 SUBROUTINE microphysics_driver(                                          &
-                       th, rho, pi_phy, p                                &
+                      t_entr_tend                                        &
+                      ,th, rho, pi_phy, p                                &
                       ,ht, dz8w, p8w, dt,dx,dy                           &
                       ,mp_physics, spec_zone                             &
                       ,specified, channel_switch                         &
@@ -326,6 +327,9 @@ SUBROUTINE microphysics_driver(                                          &
    REAL, DIMENSION( ims:ime , kms:kme , jms:jme ),                    &
          INTENT(INOUT) ::                                         th
 !
+!
+   REAL, DIMENSION( ims:ime , kms:kme , jms:jme ),                    &
+         INTENT(INOUT) ::                                         t_entr_tend
 
 !
    REAL, DIMENSION( ims:ime , kms:kme , jms:jme ),                    &
@@ -682,6 +686,7 @@ REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                        &
                  qs_b4mp(its:ite,kts:kte,jts:jte) = qs_curr(its:ite,kts:kte,jts:jte)
 #endif
              CALL mp_gt_driver(                          &
+                     t_entr_tend=t_entr_tend,            &
                      QV=qv_curr,                         &
                      QC=qc_curr,                         &
                      QR=qr_curr,                         &
@@ -744,6 +749,7 @@ REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                        &
                  qs_b4mp(its:ite,kts:kte,jts:jte) = qs_curr(its:ite,kts:kte,jts:jte)
 #endif
              CALL mp_gt_driver(                          &
+                     t_entr_tend=t_entr_tend,            &
                      QV=qv_curr,                         &
                      QC=qc_curr,                         &
                      QR=qr_curr,                         &
