@@ -22,6 +22,11 @@ state  real  RVBLTEN_ACC     ikj     misc        1   -   irh{20}dus   "RVBLTEN_A
 state  real  RTHBLTEN_ACC    ikj     misc        1   -   irh{20}dus   "RTHBLTEN_ACC"    "ACC. THETA  TENDENCY DUE TO PBL PARAMETERIZATION"   "Pa K s-1"
 rconfig  integer initend namelist,physics  1     0    - "initial tendency output" "outut acc. tendencies  0=no, 1=yes"  ""
 
+# Florian
+
+state  real  t_entr_tend     ikj     misc        1   -   irh7dus       "T_ENTR_TEND"     "t entr"   "K s-1"
+
+
 package   initial_tendencies initend==1   -  state:ru_tend_dyn_acc,rv_tend_dyn_acc,t_tend_dyn_acc,h_diabatic_acc,RUSHTEN_ACC,RVSHTEN_ACC,RTHSHTEN_ACC,RUCUTEN_ACC,RVCUTEN_ACC,RTHCUTEN_ACC,RTHRATEN_ACC,RUBLTEN_ACC,RVBLTEN_ACC,RTHBLTEN_ACC,RU_TENDF_DIFF,RV_TENDF_DIFF,T_TENDF_DIFF
 
 
