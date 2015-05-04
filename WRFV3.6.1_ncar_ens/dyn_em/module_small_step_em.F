@@ -384,12 +384,10 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
 
 
 ! local stuff
-  REAL,   DIMENSION(ims:ime, kms:kme, jms:jme)                :: t_tend_small, &
-                                                                 t_tend_large, & 
-                                                                 ru_tend_large,& 
-                                                                 ru_tend_small,&  
-                                                                 rv_tend_large,& 
-                                                                 rv_tend_small    
+
+  REAL,   DIMENSION (its:ite,kds:kde,jts:jte)                         :: t_tend_small,t_tend_large,   & 
+                                                                         ru_tend_small,ru_tend_large, & 
+                                                                         rv_tend_small,rv_tend_large
 
   INTEGER         :: i,j,k
   INTEGER :: i_start, i_end, j_start, j_end, i_endu, j_endv
@@ -408,6 +406,7 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
 
   i_endu = ite
   j_endv = jte
+
 
 !    addition of time level t back into variables
 
@@ -493,6 +492,7 @@ SUBROUTINE small_step_finish( u_2, u_1, v_2, v_1, w_2, w_1,    &
     ENDDO
   ENDIF
 #endif
+
 
   DO j = j_start, j_end
   DO i = i_start, i_end

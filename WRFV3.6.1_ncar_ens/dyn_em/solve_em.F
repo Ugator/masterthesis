@@ -3413,8 +3413,8 @@ BENCH_START(micro_driver_tim)
 #endif
 
 
-     CALL microphysics_driver(                                            &
-      &         DT=dtm             ,DX=grid%dx              ,DY=grid%dy   &
+     CALL microphysics_driver(t_entr_tend=grid%t_entr_tend                &
+      &        ,DT=dtm             ,DX=grid%dx              ,DY=grid%dy   &
       &        ,DZ8W=dz8w          ,F_ICE_PHY=grid%f_ice_phy              &
       &        ,ITIMESTEP=grid%itimestep                    ,LOWLYR=grid%lowlyr  &
       &        ,P8W=p8w            ,P=p_phy            ,PI_PHY=pi_phy     &
@@ -4107,11 +4107,11 @@ IF ( config_flags%initend ==1) then
          DO ii = grid%i_start(ij), min(grid%i_end(ij),ide-1)
             grid%h_diabatic_acc(ii,kk,jj)   = grid%h_diabatic_acc(ii,kk,jj)   + grid%h_diabatic(ii,kk,jj)
             grid%t_tend_dyn_acc(ii,kk,jj)   = grid%t_tend_dyn_acc(ii,kk,jj)   + grid%t_tend_dyn(ii,kk,jj)/grid%msfty(ii,jj) + & 
-                   + grid%t_tendf_diff(ii,kk,jj)/(grid%mu_2(ii,jj)+grid%mub(ii,jj))
-             grid%ru_tend_dyn_acc(ii,kk,jj)  = grid%ru_tend_dyn_acc(ii,kk,jj) + grid%ru_tend_dyn(ii,kk,jj)/grid%msfuy(i,j) + & 
-                   + grid%ru_tendf_diff(ii,kk,jj)/(0.5*(grid%mu_2(ii,jj)+grid%mu_2(ii-1,jj) + grid%mub(ii,jj)+grid%mub(ii-1,jj)))
-            grid%rv_tend_dyn_acc(ii,kk,jj)  = grid%rv_tend_dyn_acc(ii,kk,jj) + grid%rv_tend_dyn(ii,kk,jj)/grid%msfvx(i,j) + & 
-                   + grid%rv_tendf_diff(ii,kk,jj)/(0.5*(grid%mu_2(ii,jj)+grid%mu_2(ii,jj-1) + grid%mub(ii,jj)+grid%mub(ii,jj-1)))
+                     grid%t_tendf_diff(ii,kk,jj)/(grid%mu_2(ii,jj)+grid%mub(ii,jj))
+             grid%ru_tend_dyn_acc(ii,kk,jj)  = grid%ru_tend_dyn_acc(ii,kk,jj) + grid%ru_tend_dyn(ii,kk,jj)/grid%msfuy(ii,jj) + & 
+                    grid%ru_tendf_diff(ii,kk,jj)/(0.5*(grid%mu_2(ii,jj)+grid%mu_2(ii-1,jj) + grid%mub(ii,jj)+grid%mub(ii-1,jj)))
+            grid%rv_tend_dyn_acc(ii,kk,jj)  = grid%rv_tend_dyn_acc(ii,kk,jj) + grid%rv_tend_dyn(ii,kk,jj)/grid%msfvx(ii,jj) + & 
+                    grid%rv_tendf_diff(ii,kk,jj)/(0.5*(grid%mu_2(ii,jj)+grid%mu_2(ii,jj-1) + grid%mub(ii,jj)+grid%mub(ii,jj-1)))
         ENDDO
      ENDDO
    ENDDO
