@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 ! 
 ! NOTE:  This file will be removed once encapsulation of bare ESMF 
 !        calls is complete within WRF non-external source code.  

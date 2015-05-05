@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
       MODULE duplicate_of_driver_constants
 ! These definitions must be the same as frame/module_driver_constants
 ! and also the same as the definitions in rsl_lite.h
@@ -156,9 +143,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO k = ks, ke
             DO i = is, ie
               outbuf(p) = inbuf(i,k,j)
@@ -182,9 +174,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO k = ks, ke
             DO i = is, ie
               outbuf(p) = inbuf(i,k,j)
@@ -207,9 +204,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO k = ks, ke
             DO i = is, ie
               outbuf(i,k,j) = inbuf(p)
@@ -232,9 +234,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO k = ks, ke
             DO i = is, ie
               outbuf(i,k,j) = inbuf(p)
@@ -258,9 +265,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
             DO i = is, ie
+
+
+
           DO k = ks, ke
         DO j = js, je
               outbuf(p) = inbuf(j,k,i)
@@ -283,9 +295,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
             DO i = is, ie
+
+
+
           DO k = ks, ke
         DO j = js, je
               outbuf(p) = inbuf(j,k,i)
@@ -308,9 +325,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
             DO i = is, ie
+
+
+
           DO k = ks, ke
         DO j = js, je
               outbuf(j,k,i) = inbuf(p)
@@ -333,9 +355,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
             DO i = is, ie
+
+
+
           DO k = ks, ke
         DO j = js, je
               outbuf(j,k,i) = inbuf(p)
@@ -359,9 +386,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO j = js, je
             DO i = is, ie
               outbuf(p) = inbuf(i,j,k)
@@ -384,9 +416,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO j = js, je
             DO i = is, ie
               outbuf(p) = inbuf(i,j,k)
@@ -409,9 +446,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO j = js, je
             DO i = is, ie
               outbuf(i,j,k) = inbuf(p)
@@ -434,9 +476,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO j = js, je
             DO i = is, ie
               outbuf(i,j,k) = inbuf(p)
@@ -460,9 +507,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO i = is, ie
             DO j = js, je
               outbuf(p) = inbuf(j,i,k)
@@ -485,9 +537,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO i = is, ie
             DO j = js, je
               outbuf(p) = inbuf(j,i,k)
@@ -510,9 +567,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO i = is, ie
             DO j = js, je
               outbuf(j,i,k) = inbuf(p)
@@ -535,9 +597,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO k = ks, ke
+
+
+
           DO i = is, ie
             DO j = js, je
               outbuf(j,i,k) = inbuf(p)
@@ -561,9 +628,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO i = is, ie
             DO k = ks, ke
               outbuf(p) = inbuf(k,i,j)
@@ -586,9 +658,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO i = is, ie
             DO k = ks, ke
               outbuf(p) = inbuf(k,i,j)
@@ -611,9 +688,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO i = is, ie
             DO k = ks, ke
               outbuf(k,i,j) = inbuf(p)
@@ -636,9 +718,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
         DO j = js, je
+
+
+
           DO i = is, ie
             DO k = ks, ke
               outbuf(k,i,j) = inbuf(p)
@@ -662,9 +749,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
           DO i = is, ie
+
+
+
         DO j = js, je
             DO k = ks, ke
               outbuf(p) = inbuf(k,j,i)
@@ -687,9 +779,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
           DO i = is, ie
+
+
+
         DO j = js, je
             DO k = ks, ke
               outbuf(p) = inbuf(k,j,i)
@@ -712,9 +809,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
           DO i = is, ie
+
+
+
         DO j = js, je
             DO k = ks, ke
               outbuf(k,j,i) = inbuf(p)
@@ -737,9 +839,14 @@
         ! Local
         INTEGER i,j,k,p
 !$OMP PARALLEL PRIVATE (i,j,k,p) 
+
         p = 1
+
 !$OMP DO SCHEDULE(RUNTIME) 
           DO i = is, ie
+
+
+
         DO j = js, je
             DO k = ks, ke
               outbuf(k,j,i) = inbuf(p)

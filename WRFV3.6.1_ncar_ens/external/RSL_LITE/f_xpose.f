@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
       subroutine trans_z2x ( np, comm, dir, r_wordsize, i_wordsize, memorder, &
                                a, &
                                sd1, ed1, sd2, ed2, sd3, ed3, & 
@@ -31,6 +18,7 @@
          integer, intent(in) :: memorder
          integer, dimension((ep1-sp1+1)*(ep2-sp2+1)*(ep3-sp3+1)*max(1,(r_wordsize/i_wordsize)))         :: a
          integer, dimension((ep1x-sp1x+1)*(ep2x-ep2x+1)*(ep3x-sp3x+1)*max(1,(r_wordsize/i_wordsize)))   :: ax
+
          include 'mpif.h'
 
 !local
@@ -185,6 +173,7 @@
              call mpi_abort(ierr)
            endif
          enddo
+
          return
       end subroutine trans_z2x
 
@@ -209,6 +198,7 @@
          integer, intent(in) :: dir ! 1 is a->ax, otherwise ax->a
          integer, dimension((ep1x-sp1x+1)*(ep2x-ep2x+1)*(ep3x-sp3x+1)*max(1,(r_wordsize/i_wordsize)))   :: ax
          integer, dimension((ep1y-sp1y+1)*(ep2y-sp2y+1)*(ep3y-sp3y+1)*max(1,(r_wordsize/i_wordsize)))   :: ay
+
          include 'mpif.h'
 
          integer, dimension(0:(ep1x-sp1x+1)*(ep2x-sp2x+1)*(ep3x-sp3x+1)*max(1,(r_wordsize/i_wordsize))) :: xbuf
@@ -367,6 +357,7 @@
              call mpi_abort(ierr)
            endif
          enddo
+
          return
       end subroutine trans_x2y
 

@@ -8,19 +8,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ! Note that MAX_ALARMS must match MAX_WRF_ALARMS defined in 
 ! ../../frame/module_domain.F !!!  Eliminate this dependence with 
 ! grow-as-you-go AlarmList in ESMF_Clock...  
@@ -447,6 +434,9 @@ SUBROUTINE timedecmonth( time )
   ! locals
   INTEGER :: nfeb
   INTEGER :: MM
+
+
+
   CALL timegetmonth( time, MM )  ! current month, 1-12
   ! find previous month
   MM = MM - 1
@@ -461,6 +451,7 @@ SUBROUTINE timedecmonth( time )
     time%basetime%S = time%basetime%S - &
       ( INT( mday(MM), ESMF_KIND_I8 ) * 86400_ESMF_KIND_I8 )
   ENDIF
+
 END SUBROUTINE timedecmonth
 
 

@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 ! Various dummy type definitions and routines for the sole purpose of 
 ! mimicking newer ESMF interface features without necessarily implementing 
 ! them.  
@@ -105,6 +92,9 @@ CONTAINS
    SUBROUTINE ESMF_Finalize( rc )
       USE esmf_basemod
       INTEGER, INTENT(  OUT), OPTIONAL :: rc
+
+
+
       LOGICAL :: flag
       INTEGER :: ier
 

@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 !*------------------------------------------------------------------------------
 !*  Standard Disclaimer
 !*
@@ -53,7 +40,11 @@ module wrf_data
   integer                , parameter      :: WARN             = 1
   integer                , parameter      :: WrfDataHandleMax = 99
   integer                , parameter      :: MaxDims          = 2000 ! = NF_MAX_VARS
+
+
+
   integer                , parameter      :: MaxVars          = 3000
+
   integer                , parameter      :: MaxTimes         = 10000
   integer                , parameter      :: DateStrLen       = 19
   integer                , parameter      :: VarNameLen       = 31
@@ -470,6 +461,13 @@ subroutine GetDim(MemoryOrder,NDim,Status)
   Status = WRF_NO_ERR
   return
 end subroutine GetDim
+
+
+
+
+
+
+
 
 
 subroutine GetIndices(NDim,Start,End,i1,i2,j1,j2,k1,k2)

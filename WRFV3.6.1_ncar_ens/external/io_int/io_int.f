@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 ! (old comment from when this file was a template)
 ! This is a template for adding a package-dependent implemetnation of
 ! the I/O API.  You can use the name xxx since that is already set up

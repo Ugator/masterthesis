@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 module read_util_module
 
 contains

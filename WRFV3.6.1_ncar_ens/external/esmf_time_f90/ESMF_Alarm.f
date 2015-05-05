@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 !
 ! Earth System Modeling Framework
 ! Copyright 2002-2003, University Corporation for Atmospheric Research,
@@ -42,9 +29,16 @@
 
 
 
+
+
+
+
+
+
 ! Note that MAX_ALARMS must match MAX_WRF_ALARMS defined in 
 ! ../../frame/module_domain.F !!!  Eliminate this dependence with 
 ! grow-as-you-go AlarmList in ESMF_Clock...  
+
 
 ! TBH:  TODO:  Hook this into the WRF build so WRF can use either "no-leap" or 
 ! TBH:         Gregorian calendar.  Now WRF is hard-wired to use Gregorian.  

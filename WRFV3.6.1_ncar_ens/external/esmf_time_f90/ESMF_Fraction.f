@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 !
 ! Earth System Modeling Framework
 ! Copyright 2002-2003, University Corporation for Atmospheric Research,
