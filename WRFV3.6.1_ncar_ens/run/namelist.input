@@ -26,6 +26,46 @@
  io_form_input                       = 2
  io_form_boundary                    = 2
  debug_level                         = 0
+<<<<<<< Updated upstream
+=======
+ all_ic_times                        = .false.,
+ nwp_diagnostics                     = 1,
+ iofields_filename                   = "./io.txt","./io.txt"
+ ignore_iofields_warning             = .true.,
+ io_form_auxhist11                   = 0,
+ auxhist11_outname                   = "precip_d<domain>_<date>.grb",
+ auxhist11_interval_m                = 60,60,60
+ frames_per_auxhist11                = 1,1,1,
+ io_form_auxhist2                    = 0,
+ auxhist2_outname                    = "radar_d<domain>.<date>.nc",
+ auxhist2_interval                   = 12280,60,
+ io_form_auxhist23                   = 2,
+ auxhist23_outname                   = "diags_d<domain>.<date>.nc",
+ auxhist23_interval                  = 360,60,
+ frames_per_auxhist23                = 1,1,
+ bdy_inname                          = "wrfbdy_d<domain>_<date>"
+ auxhist20_outname                    = "init_tend_enkf_d<domain>_<date>.nc",
+ frames_per_auxhist20                 = 1000,1000,
+ io_form_auxhist20                    = 2,
+ auxhist20_interval_s                 = 3600,3600,
+ auxhist7_outname                    = "init_tend_FLo_d<domain>_<date>.nc",
+ auxhist7_begin_y                  = 2015,
+ auxhist7_begin_mo                 = 04,
+ auxhist7_begin_d                  = 29,
+ auxhist7_begin_h                  = 00,
+ auxhist7_begin_m                  = 00,
+ auxhist7_begin_s                  = 00,
+ auxhist7_end_y                    = 2015,
+ auxhist7_end_mo                   = 04,
+ auxhist7_end_d                    = 29,
+ auxhist7_end_h                    = 00,
+ auxhist7_end_m                    = 15,
+ auxhist7_end_s                    = 00,
+ frames_per_auxhist20                 = 1000,1000,
+ io_form_auxhist20                    = 2,
+ auxhist7_interval_s                 = 75,75
+ 
+>>>>>>> Stashed changes
  /
 
  &domains
