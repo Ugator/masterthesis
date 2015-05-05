@@ -2,3 +2,11 @@
 downloads*
 configure.wrf
 configure.wrf*
+*.o
+*.f90
+*.mod
+*.inc
+*.nc
+*.exe
+*.a
+
