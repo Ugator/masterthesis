@@ -1585,9 +1585,6 @@
 !+---+-----------------------------------------------------------------+
       do k = kts, kte
          temp(k) = t1d(k)
-!FLO
-         t_entr_tend1d(k)=temp(k)
-!end
          qv(k) = MAX(1.E-10, qv1d(k))
          pres(k) = p1d(k)
          rho(k) = 0.622*pres(k)/(R*temp(k)*(qv(k)+0.622))
@@ -1730,6 +1727,32 @@
          vsc2(k) = SQRT(rho(k)/visco(k))
          lvap(k) = lvap0 + (2106.0 - 4218.0)*tempc
          tcond(k) = (5.69 + 0.0168*tempc)*1.0E-5 * 418.936
+         !FLO
+         !pres(k) pressure
+         !-- CP            heat capacity at constant pressure for dry air (J/kg/K)
+         !-- R_d           gas constant for dry air (J/kg/K)
+         !-- R_v           gas constant for water vapor (J/kg/K)
+         !-- XLS           latent heat of sublimation   (J/kg)
+         !-- XLV           latent heat of vaporization  (J/kg)
+         !-- XLF           latent heat of melting       (J/kg)
+         ! qv         water vapor    mixing ratio (kg/kg)
+         ! qc1d         cloud water    mixing ratio (kg/kg)
+         ! qr1d         rain water     mixing ratio (kg/kg)
+         ! qi1d         cloud ice      mixing ratio (kg/kg)
+         ! qs1d         snow           mixing ratio (kg/kg)
+         ! qg1d         graupel        mixing ratio (kg/kg)
+         ! qvs/qvsi liquid saturation mixing ratio
+         !  no hail?
+         ! EXP(...) exponential function, LOG(...) natural log
+
+         ! p0=100000 Reference pressure
+         ! cw=41,729.1 liquid water heat capacity
+         
+         t_entr_tend1d(k)=t_entr_tend1d(k)- &
+                          temp(k)*(100000./p1d(k))**(-R_d/(CP+41729.1*(qv(k)+qc1d(k)+qr1d(k)+qi1d(k)+qs1d(k)+qg1d(k))))* &
+                          EXP( ((XLV+R_v*LOG(qvs(k)/(qc1d(k)+qr1d(k))))*(qv(k)+qc1d(k)+qr1d(k)+qi1d(k)+qs1d(k)+qg1d(k)))/((CP+41729.1*(qv(k)+qc1d(k)+qr1d(k)+qi1d(k)+qs1d(k)+qg1d(k)))*temp(k)) - &
+                          ((XLF+R_v*LOG(qvs(k)/qvsi(k)))*(qi1d(k)+qs1d(k)+1q1d(k)))/((CP+41729.1*(qv(k)+qc1d(k)+qr1d(k)+qi1d(k)+qs1d(k)+qg1d(k)))*temp(k))  )
+         !end
       enddo
 
 !+---+-----------------------------------------------------------------+
